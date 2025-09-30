@@ -1,5 +1,6 @@
-CC ?= gcc
+CC := gcc
 CFLAGS ?= -Wall -std=c99 -fPIC -O3
+LDFLAGS ?= -s
 
 TRACING ?= 0
 
@@ -13,18 +14,22 @@ LIBCRYPTO_OBJECTS = \
 LIBSSL_OBJECTS = \
 	src/libssl.o
 
+TARGETS = \
+	libcrypto.so.1.0.0 \
+	libssl.so.1.0.0
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-all: libcrypto.so.1.0.0 libssl.so.1.0.0
+all: $(TARGETS)
 
 clean:
-	rm -rf libcrypto.so.1.0.0 $(LIBCRYPTO_OBJECTS) $(LIBSSL_OBJECTS) libssl.so.1.0.0
+	rm -rf $(TARGETS) $(LIBCRYPTO_OBJECTS) $(LIBSSL_OBJECTS)
 
 
 libcrypto.so.1.0.0: $(LIBCRYPTO_OBJECTS)
-	$(CC) -shared -o $@ $<
+	$(CC) $(LDFLAGS) -shared -o $@ $<
 
 libssl.so.1.0.0: $(LIBSSL_OBJECTS)
-	$(CC) -shared -o $@ $<
+	$(CC) $(LDFLAGS) -shared -o $@ $<
 
